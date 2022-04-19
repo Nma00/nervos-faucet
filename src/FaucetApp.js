@@ -85,14 +85,14 @@ async function getTokens() {
 function FaucetApp() {
   return (
     <div className="py-3">
-      <h1 className="mb-4">Nervos Swap Faucet</h1>
+      <h1 className="mb-4">Faucet for Nervos Swap</h1>
       <p className="lead mb-4">Get test tokens for <a className="text-decoration-none" href="http://nervoswap.freeddns.org:8080">Nervos Swap</a>.</p>
       <div className="mb-3">
-        <label htmlFor="godwoken-address" className="form-label">Your Godwoken Testnet address</label>
-        <input type="text" className="form-control" id="godwoken-address" placeholder="" />
+        <label htmlFor="godwoken-address" className="form-label">Your Godwoken address :</label>
+        <input type="text" className="form-control" id="godwoken-address" placeholder="0x..." />
       </div>
       <div className="d-grid mb-4">
-          <button type="button" className="btn btn-primary" onClick={getTokens}>Get {mintAmount} TOKENA and {mintAmount} TOKENB</button>
+          <button type="button" className="btn btn-primary" onClick={getTokens}>Receive {mintAmount} TOKENA and {mintAmount} TOKENB</button>
       </div>
       <p id="mint-result"></p>
       <button type="button" className="btn btn-link btn-sm" onClick={() => addTokenToMM('TOKENA', addrTokenA)}>Add TOKENA to Metamask</button>
