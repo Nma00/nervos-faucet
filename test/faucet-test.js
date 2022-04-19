@@ -3,49 +3,67 @@ const { ethers } = require("hardhat");
 
 const overrides = { gasLimit: 300000 };
 
-let signer, tokenA, tokenB;
+const godWokenUrl = "https://godwoken-testnet-web3-v1-rpc.ckbapp.dev";
 
-async function showBalance(account) {
-  console.log(`${account.address} balance :`)
-  console.log("CKB", ethers.utils.formatUnits(await account.getBalance(), 8));    
-  for (let token of [tokenA, tokenB]) {
-      let name = await token.name(), balance = await token.balanceOf(account.address);
-      console.log(name, ethers.utils.formatUnits(balance));    
-  }
+// Private key unsafe user MM
+const privateKey = "72483587cdfc82a43cd770661f720c5c2e5bcc57324c7bf3749d3d6f78df81b1";
+
+// Addresses tokens sur Godwoken Testnet
+const addrTokenA = "0xD29cb1824544C30AEa1F22443e9DCF688ecA0bE4"; 
+const addrTokenB = "0xD2Da53D65C362E81C0580C5441baaDD16d4c7D48";
+
+let provider, signer, tokenA, tokenB;
+
+async function showBalance(addr) {
+  console.log(`${addr} balance :`)
+  console.log("CKB", ethers.utils.formatUnits(await provider.getBalance(addr), 8));    
+  let balanceA = await tokenA.balanceOf(addr);
+  let balanceB = await tokenB.balanceOf(addr);
+  console.log("TokenA", ethers.utils.formatUnits(balanceA));    
+  console.log("TokenB", ethers.utils.formatUnits(balanceB)); 
 };
 
 before(async function () {
-  [signer, account1] = await ethers.getSigners();
+  
+  provider = new ethers.providers.JsonRpcProvider(godWokenUrl);
+  signer = new ethers.Wallet(privateKey, provider);
+
   console.log("Signer:", signer.address);
-  console.log("Account 1:", account1.address);
+  
+  const abiToken = [
+    "function name() view returns (string)",
+    "function symbol() view returns (string)",
+    "function balanceOf(address) view returns (uint)",
+    "function transfer(address to, uint amount)",
+    "function mint(address account, uint256 amount)"
+  ];
 
-  const TokenA = await ethers.getContractFactory("TokenA");
-  tokenA = await TokenA.deploy();
-  await tokenA.deployed();
-  console.log("TokenA deployed to:", tokenA.address);
+  tokenA = new ethers.Contract(addrTokenA, abiToken, signer);
+  tokenB = new ethers.Contract(addrTokenB, abiToken, signer);
+  
+  console.log("TokenA deployed to :", tokenA.address);
+  console.log(await tokenA.name());
+  console.log(await tokenA.symbol());
+  console.log("TokenB deployed to :", tokenB.address);
+  console.log(await tokenB.name());
+  console.log(await tokenB.symbol());
 
-  const TokenB = await ethers.getContractFactory("TokenB");
-  tokenB = await TokenB.deploy();
-  await tokenB.deployed();
-  console.log(`TokenB deployed to: ${tokenB.address}\n`);
 });
 
-describe("Faucet", function () {
-  it("IT Faucet", async function () {
+describe("Faucet Test 2", function () {
+  it("IT Faucet 2", async function () {
+    
+    // Unsafe account MM
+    let account = "0xb6d6859d4BC21F1dEdE6eE6c314DFF8d4fCE0ECf";
       
-    await showBalance(signer);
+    await showBalance(signer.address);
+    
+    await showBalance(account);
 
-    await showBalance(account1);
-
-    const tx = await tokenA.mint(account1.address, 2000, overrides);
+    const tx = await tokenA.mint(account, 2000, overrides);
     await tx.wait();
 
-    const balance = await tokenA.balanceOf(account1.address);
-    const twoThousand = ethers.utils.parseUnits("2000", 18); 
-
-    expect(ethers.utils.formatUnits(balance)).to.equal(ethers.utils.formatUnits(twoThousand));
-
-    await showBalance(account1);
+    await showBalance(account);
 
   });
 });
