@@ -10,16 +10,42 @@ const privateKey = "72483587cdfc82a43cd770661f720c5c2e5bcc57324c7bf3749d3d6f78df
 const addrTokenA = "0xD29cb1824544C30AEa1F22443e9DCF688ecA0bE4"; 
 const addrTokenB = "0xD2Da53D65C362E81C0580C5441baaDD16d4c7D48";
 
-const mintAmount = 10000;
+const mintAmount = 10000
 
 let provider, signer, tokenA, tokenB;
 
 const overrides = { gasLimit: 300000 };
 
+async function addTokenToMM(tokenSymbol, tokenAddress) {
+  try {
+    const wasAdded = await window.ethereum.request({
+      method: 'wallet_watchAsset',
+      params: {
+        type: 'ERC20', // Initially only supports ERC20, but eventually more!
+        options: {
+          address: tokenAddress, // The address that the token is at.
+          symbol: tokenSymbol, // A ticker symbol or shorthand, up to 5 chars.
+          decimals: 18, // The number of decimals in the token
+        },
+      },
+    });
+  
+    if (wasAdded) {
+      console.log('Thanks for your interest!');
+    } else {
+      console.log('Your loss!');
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 async function getTokens() {
   
-  let addrToMint = document.getElementById('godwoken-address').value;
+  let addrToMint = document.getElementById('godwoken-address').value.trim();
   
+  console.log(`Minting ${mintAmount} TOKENA/ TOKENB to  ${addrToMint}`);
+
   provider = new ethers.providers.JsonRpcProvider(godWokenUrl);
   signer = new ethers.Wallet(privateKey, provider);
 
@@ -39,11 +65,21 @@ async function getTokens() {
   console.log("TokenA deployed to :", tokenA.address);
   console.log("TokenB deployed to :", tokenB.address);
   
-  const tx1 = await tokenA.mint(addrToMint, mintAmount, overrides);
-  await tx1.wait();
-    
-  const tx2 = await tokenB.mint(addrToMint, mintAmount, overrides);
-  await tx2.wait();
+  let resultElem = document.getElementById('mint-result');
+  try {
+
+    resultElem.innerHTML = 'Pending <div class="spinner-border spinner-border-sm" role="status"></div>';
+
+    const tx1 = await tokenA.mint(addrToMint, mintAmount, overrides);
+    const tx2 = await tokenB.mint(addrToMint, mintAmount, overrides);
+  
+    Promise.all([tx1.wait(), tx2.wait()])
+      .then(() => resultElem.innerHTML = '<span class="text-success">Success !</span>');
+
+  } catch(e) { 
+    resultElem.innerHTML = `<span class="text-danger">Transaction error : ${e}</span>`; 
+  }
+
 }
 
 function FaucetApp() {
@@ -56,9 +92,11 @@ function FaucetApp() {
         <input type="text" className="form-control" id="godwoken-address" placeholder="" />
       </div>
       <div className="d-grid mb-4">
-          <button type="button" className="btn btn-primary" onClick={getTokens}>Get 10000 TOKENA and 10000 TOKENB</button>
+          <button type="button" className="btn btn-primary" onClick={getTokens}>Get {mintAmount} TOKENA and {mintAmount} TOKENB</button>
       </div>
-      <button type="button" className="btn btn-link btn-sm">Add TOKENA to Metamask</button><button type="button" className="btn btn-link btn-sm">Add TOKENB to Metamask</button>      
+      <p id="mint-result"></p>
+      <button type="button" className="btn btn-link btn-sm" onClick={() => addTokenToMM('TOKENA', addrTokenA)}>Add TOKENA to Metamask</button>
+      <button type="button" className="btn btn-link btn-sm"  onClick={() => addTokenToMM('TOKENB', addrTokenB)}>Add TOKENB to Metamask</button>      
     </div>
   );
 }
