@@ -68,7 +68,7 @@ async function getTokens() {
   let resultElem = document.getElementById('mint-result');
   try {
 
-    resultElem.innerHTML = 'Pending <div class="spinner-border spinner-border-sm" role="status"></div>';
+    resultElem.innerHTML = '<div class="spinner-border spinner-border-sm" role="status"></div> Transaction pending. Wait a few minutes please ...';
 
     const tx1 = await tokenA.mint(addrToMint, mintAmount, overrides);
     const tx2 = await tokenB.mint(addrToMint, mintAmount, overrides);
@@ -86,7 +86,7 @@ function FaucetApp() {
   return (
     <div className="py-3">
       <h1 className="mb-4">Faucet for Nervos Swap</h1>
-      <p className="lead mb-4">Get test tokens for <a className="text-decoration-none" href="http://nervoswap.freeddns.org:8080">Nervos Swap</a>.</p>
+      <p className="lead mb-4">Get tokens to test <a className="text-decoration-none" href="http://nervoswap.freeddns.org:8080">Nervos Swap</a> application.</p>
       <div className="mb-3">
         <label htmlFor="godwoken-address" className="form-label">Your Godwoken address :</label>
         <input type="text" className="form-control" id="godwoken-address" placeholder="0x..." />
