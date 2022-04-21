@@ -86,7 +86,7 @@ function FaucetApp() {
   return (
     <div className="py-3">
       <h1 className="mb-4">Faucet for Nervos Swap</h1>
-      <p className="lead mb-4">Get tokens to test <a className="text-decoration-none" href="http://nervoswap.freeddns.org:8080">Nervos Swap</a> application.</p>
+      <p className="lead mb-4">Get test tokens for <a className="text-decoration-none" href="http://nervoswap.freeddns.org:8080">Nervos Swap</a> application.</p>
       <div className="mb-3">
         <label htmlFor="godwoken-address" className="form-label">Your Godwoken address :</label>
         <input type="text" className="form-control" id="godwoken-address" placeholder="0x..." />
