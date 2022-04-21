@@ -14,12 +14,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 
-const ALCHEMY_API_KEY = 'k-gshmWG-W3hKlqh4QCFQwYPLG-SC_sa';
+const ALCHEMY_API_KEY = '';
 
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
-const PRIVATE_KEY = '72483587cdfc82a43cd770661f720c5c2e5bcc57324c7bf3749d3d6f78df81b1';
+const PRIVATE_KEY = '';
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
